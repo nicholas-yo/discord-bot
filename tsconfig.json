@@ -1,0 +1,33 @@
+{
+	"compilerOptions": {
+		"strict": true,
+		"noEmit": true,
+		"strictFunctionTypes": true,
+		"lib": ["ESNext"],
+		"target": "ESNext",
+		"module": "ESNext",
+		"sourceMap": true,
+		"noImplicitAny": true,
+		"noImplicitReturns": true,
+		"noImplicitThis": true,
+		"moduleResolution": "bundler",
+		"esModuleInterop": true,
+		"allowSyntheticDefaultImports": true,
+		"strictNullChecks": true,
+		"strictPropertyInitialization": true,
+		"baseUrl": "src",
+		"rootDir": "src",
+		"allowImportingTsExtensions": true,
+		"removeComments": true,
+		"alwaysStrict": true,
+	},
+	"ts-node": {
+		"transpileOnly": true,
+		"swc": true,
+		"esm": true,
+		"preferTsExts": true,
+		"files": true,
+		"emit": false,
+		
+	}
+}
