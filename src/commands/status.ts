@@ -65,7 +65,7 @@ export default async (interaction: Interaction) => {
 	await interaction.deferReply();
 
 	const headers = new Headers({
-		'cache-control': 'max-age=604800, must-revalidate'
+		'cache-control': 'max-age=86400, must-revalidate'
 	});
 
 	const { value: address } = interaction.options.get('address')!;
