@@ -2,10 +2,10 @@ import color from 'cli-color';
 import { log } from 'node:console';
 import { REST, Routes, Client } from 'discord.js';
 
-import getModules from './utils/getModules.ts';
+import getModules, { type Command } from './utils/getModules.ts';
 
 const startSlashCommands = async (client: Client) => {
-	const modules = await getModules<Module, 'commands'>('commands');
+	const modules = await getModules('commands');
 
 	const rest: REST = new REST().setToken(process.env.TOKEN!);
 
@@ -18,7 +18,7 @@ const startSlashCommands = async (client: Client) => {
 				process.env.GUILD_ID!
 			),
 			{
-				body: [...modules.values()].map(({ command }) => command!.toJSON())
+				body: [...modules.values()].map(({ command }) => command.toJSON())
 			}
 		);
 
@@ -28,15 +28,15 @@ const startSlashCommands = async (client: Client) => {
 			)} - successfully reloaded application (/) commands.`
 		);
 
-		client.on('interactionCreate', async interaction => {
+		client.on('interactionCreate', interaction => {
 			if (!interaction.isChatInputCommand()) return;
 			if (!interaction.isCommand()) return;
 
 			const { commandName } = interaction;
 
-			const { default: execute } = modules.get(commandName as 'ping')!;
+			const { default: execute } = modules.get(commandName as Command)!;
 
-			await execute(interaction);
+			void execute(interaction);
 		});
 	} catch (err) {
 		const { message } = err as Error;

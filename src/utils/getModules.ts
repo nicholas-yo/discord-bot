@@ -2,41 +2,47 @@ import { readdir } from 'node:fs/promises';
 import { resolve, dirname } from 'node:path/posix';
 import { fileURLToPath } from 'node:url';
 
-type Events = 'ready' | 'guildMemberAdd' | 'guildMemberRemove';
+import type {
+	GetModules,
+	Modules,
+	Module,
+	Command,
+	Iterate
+} from '../@types/getModules';
 
-type Commands = 'ping' | 'status' | 'ban';
+export { Command };
 
-type Conditional<Path> = Path extends 'events'
-	? Events
-	: Path extends 'commands'
-	? Commands
-	: string;
+const __dirname: string = dirname(fileURLToPath(import.meta.url));
 
-type File<Path> = Conditional<Path>;
+const getModules: GetModules = async dir => {
+	const modules: Modules<typeof dir, Module<typeof dir>> = new Map();
 
-type Modules<Path, Module> = Map<Conditional<Path>, Module>;
+	/**
+	 * Maybe this is not the best name for this function
+	 */
+	const iterate: Iterate = async dir => {
+		const dirPath: string = resolve(__dirname, 'src', dir);
 
-type Paths = 'commands' | 'events';
+		const files = await readdir(dirPath, {
+			withFileTypes: true
+		});
 
-const getModules = async <
-	Module = Record<string, unknown>,
-	Path extends Paths = Paths
->(
-	path: Path
-) => {
-	const modules: Modules<Path, Module> = new Map();
+		for (const file of files)
+			if (file.isDirectory()) {
+				await iterate(resolve(dirPath, file.name));
+			} else {
+				const modulePath: string = resolve(dirPath, file.name);
 
-	const __dirname: string = dirname(fileURLToPath(import.meta.url));
+				const module = (await import(modulePath)) as Module<typeof dir>;
 
-	const dir: string = resolve(__dirname, 'src', path);
+				const filename = file.name.slice(0, -3);
 
-	const files: string[] = await readdir(dir);
+				// @ts-expect-error "Argument of type string is not assignable" i don't know why this error
+				modules.set(filename, module);
+			}
+	};
 
-	for (const file of files) {
-		const module = (await import(resolve(dir, file))) as Module;
-
-		modules.set(file.slice(0, -3) as File<Path>, module);
-	}
+	await iterate(dir);
 
 	return modules;
 };

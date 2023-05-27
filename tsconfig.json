@@ -8,6 +8,7 @@
 		"module": "ESNext",
 		"sourceMap": true,
 		"noImplicitAny": true,
+		"typeRoots": ["src/@types"],
 		"noImplicitReturns": true,
 		"noImplicitThis": true,
 		"moduleResolution": "bundler",
@@ -19,7 +20,7 @@
 		"rootDir": "src",
 		"allowImportingTsExtensions": true,
 		"removeComments": true,
-		"alwaysStrict": true,
+		"alwaysStrict": true
 	},
 	"ts-node": {
 		"transpileOnly": true,
@@ -27,7 +28,6 @@
 		"esm": true,
 		"preferTsExts": true,
 		"files": true,
-		"emit": false,
-		
+		"emit": false
 	}
 }

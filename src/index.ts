@@ -10,9 +10,9 @@ import startSlashCommands from './startSlashCommands.ts';
 
 await startSlashCommands(client);
 
-const modules = await getModules<Module, 'events'>('events');
+const modules = await getModules('events');
 
-for (const [event, module] of modules)
-	client[module.type ?? 'on'](event as string, module.default);
+for (const [event, { default: listener, type }] of modules)
+	client[type ?? 'on'](event, listener);
 
-void client.login(process.env.TOKEN);
+await client.login(process.env.TOKEN);
